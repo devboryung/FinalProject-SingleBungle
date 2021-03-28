@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+  <settings>
+  	<setting name="jdbcTypeForNull" value="NULL"/>
+  	<!-- DB로 전달되는 값 중 null이 있으면 에러가 아닌 NULL 자체로 인식 -->
+  </settings>
+  
+  <typeAliases>
+  	<typeAlias type="com.gaji.SingleBungle.findFriend.model.vo.FindFriend" alias="Friend" /> 
+  	<typeAlias type="com.gaji.SingleBungle.findFriend.model.vo.FindFriendSearch" alias="FindFriendSearch" /> 
+  	<typeAlias type="com.gaji.SingleBungle.findFriend.model.vo.FindFriendAttachment" alias="FriendAttachment" />
+  	<typeAlias type="com.gaji.SingleBungle.findFriend.model.vo.FindFriendReply" alias="FriendReply" /> 
+  	<typeAlias type="com.gaji.SingleBungle.findFriend.model.vo.FindFriendChatting" alias="FriendChat" /> 
+  			
+  	<typeAlias type="com.gaji.SingleBungle.review.model.vo.Review" alias ="Review"/>
+  	<typeAlias type="com.gaji.SingleBungle.review.model.vo.ReviewAttachment" alias ="ReviewAttachment"/>
+  	<typeAlias type="com.gaji.SingleBungle.review.model.vo.ReviewReply" alias ="ReviewReply"/>
+  	<typeAlias type="com.gaji.SingleBungle.review.model.vo.ReviewSearch" alias ="ReviewSearch"/>
+  	<typeAlias type="com.gaji.SingleBungle.review.model.vo.ReviewLike" alias ="ReviewLike"/>
+  			 
+  	<typeAlias type="com.gaji.SingleBungle.message.model.vo.Message" alias ="Message"/>
+  			 
+  	<typeAlias type="com.gaji.SingleBungle.admin.vo.ABoard" alias="ABoard" />
+  	<typeAlias type="com.gaji.SingleBungle.admin.vo.AAttachment" alias="AAttachment" />
+  	<typeAlias type="com.gaji.SingleBungle.admin.vo.inquiry" alias="inquiry" />
+  	<typeAlias type="com.gaji.SingleBungle.admin.vo.IAttachment" alias="IAttachment" />
+  	<typeAlias type="com.gaji.SingleBungle.admin.vo.inquiryReply" alias="inquiryReply" />
+  	<typeAlias type="com.gaji.SingleBungle.admin.vo.Reply" alias="Reply" />
+  	<typeAlias type="com.gaji.SingleBungle.admin.vo.reportBoard" alias="reportBoard" />
+  	<typeAlias type="com.gaji.SingleBungle.admin.vo.reportReply" alias="reportReply" />
+
+  	
+  	<typeAlias type="com.gaji.SingleBungle.board.model.vo.Board" alias="Board" />
+  	<typeAlias type="com.gaji.SingleBungle.board.model.vo.BoardAttachment" alias="BoardAttachment" />
+  	<typeAlias type="com.gaji.SingleBungle.board.model.vo.BoardLike" alias="BoardLike" />
+  	<typeAlias type="com.gaji.SingleBungle.board.model.vo.BoardReply" alias="BoardReply" />
+  	<typeAlias type="com.gaji.SingleBungle.board.model.vo.BoardReport" alias="BoardReport" />
+  	<typeAlias type="com.gaji.SingleBungle.board.model.vo.BoardReplyReport" alias="BoardReplyReport" />
+  	<typeAlias type="com.gaji.SingleBungle.board.model.vo.BoardSearch" alias ="BoardSearch"/>
+  	
+  	
+  	<typeAlias type="com.gaji.SingleBungle.cafe.model.vo.Cafe" alias="Cafe" />
+  	<typeAlias type="com.gaji.SingleBungle.cafe.model.vo.CafeAttachment" alias="CafeAttachment" />
+  	<typeAlias type="com.gaji.SingleBungle.cafe.model.vo.CafeLike" alias="CafeLike" />
+  	<typeAlias type="com.gaji.SingleBungle.cafe.model.vo.CafeReply" alias="CafeReply" />
+  	<typeAlias type="com.gaji.SingleBungle.cafe.model.vo.CafeReport" alias="CafeReport" />
+  	<typeAlias type="com.gaji.SingleBungle.cafe.model.vo.CafeReplyReport" alias="CafeReplyReport" />
+  	<typeAlias type="com.gaji.SingleBungle.cafe.model.vo.CafeSearch" alias ="CafeSearch"/>
+  	
+  	
+  	<typeAlias type="com.gaji.SingleBungle.member.model.vo.Member" alias="Member" />
+  	<typeAlias type="com.gaji.SingleBungle.member.model.vo.MReply" alias="MReply" />
+  	
+
+  	
+  	<typeAlias type="com.gaji.SingleBungle.market.model.vo.Market" alias="Market" />       
+  	<typeAlias type="com.gaji.SingleBungle.market.model.vo.MarketAttachment" alias="MarketAttachment" />
+  	<typeAlias type="com.gaji.SingleBungle.market.model.vo.MarketLike" alias="MarketLike" />
+		<typeAlias type="com.gaji.SingleBungle.market.model.vo.MarketReply" alias="MarketReply" />
+		<typeAlias type="com.gaji.SingleBungle.market.model.vo.MarketSearch" alias ="MarketSearch"/>
+		<typeAlias type="com.gaji.SingleBungle.market.model.vo.MarketReport" alias ="MarketReport"/>
+		<typeAlias type="com.gaji.SingleBungle.market.model.vo.MarketReplyReport" alias="MarketReplyReport" />
+		
+  </typeAliases>
+  
+  <mappers>
+  	<mapper resource="/mappers/friend-mapper.xml" />
+  	<mapper resource="/mappers/friendReply-mapper.xml" />
+  	
+  	<mapper resource="/mappers/board-mapper.xml" />
+  	<mapper resource="/mappers/boardReply-mapper.xml" />
+  	
+  	<mapper resource="/mappers/cafe-mapper.xml" />
+  	<mapper resource="/mappers/cafeReply-mapper.xml" />
+  	
+  	<mapper resource="/mappers/market-mapper.xml" />
+  	  	<mapper resource="/mappers/marketReply-mapper.xml" />
+<!--   	<mapper resource="/mappers/market-mapper.xml" />  -->
+
+
+  	<mapper resource="/mappers/review-mapper.xml"/>
+  	<mapper resource="/mappers/reviewReply-mapper.xml"/>
+  	
+  	
+  	<mapper resource="/mappers/message-mapper.xml"/>
+  	
+  	<mapper resource="/mappers/admin-mapper.xml" />
+  	<mapper resource="/mappers/inquiryReply-mapper.xml" />
+  	
+  	<mapper resource="/mappers/member-mapper.xml" />
+  	
+
+  </mappers>
+</configuration>
+

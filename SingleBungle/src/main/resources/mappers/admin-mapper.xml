@@ -1,0 +1,1094 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="adminMapper">
+
+<resultMap type="ABoard" id="board_rm">
+		<id property="boardNo" column="BOARD_NO" />
+
+		<result property="boardTitle" column="BOARD_TITLE" />
+		<result property="boardContent" column="BOARD_CONTENT" />
+		<result property="readCount" column="READ_COUNT" />
+		<result property="boardCreateDate" column="CREATE_DT" />
+		<result property="boardStatus" column="STATUS" />
+		<result property="boardCode" column="BOARD_CD" />
+		<result property="categoryCode" column="COTEGORY_CD" />
+		<result property="memberNo" column="MEM_NO" />
+	</resultMap>
+	
+	<resultMap type="AAttachment" id="attachment_rm">
+		<id property="fileNo" column="FILE_NO" />
+		
+		<result property="filePath" column="FILE_PATH" />
+		<result property="fileName" column="FILE_NM" />
+		<result property="parentBoardNo" column="PARENT_BOARD_NO" />
+		<result property="fileLevel" column="FILE_LEVEL" />
+	</resultMap>
+	
+	<resultMap type="inquiry" id="inquiry_rm">
+		<id property="inquiryNo" column="INQUIRY_NO" />
+		
+		<result property="inquiryTitle" column="INQUIRY_TITLE" />
+		<result property="inquiryContent" column="INQUIRY_CONTENT" />
+		<result property="createDate" column="CREATE_DT" />
+		<result property="inquiryFl" column="INQUIRY_FL" />
+		<result property="categoryCode" column="CTGR_CD" />
+		<result property="memberNo" column="MEM_NO" />
+		<result property="categoryNm" column="CTGR_NM" />
+	</resultMap>
+
+	<resultMap type="IAttachment" id="Iattachment_rm">
+		<id property="fileNo" column="FILE_NO" />
+		
+		<result property="filePath" column="FILE_PATH" />
+		<result property="fileName" column="FILE_NM" />
+		<result property="parentBoardNo" column="PARENT_BOARD_NO" />
+		<result property="fileLevel" column="FILE_LEVEL" />
+	</resultMap>
+	
+	<resultMap type="Reply" id="reply_rm">
+		<id property="replyNo" column="REPLY_NO" />
+		<result property="replyContent" column="REPLY_CONTENT" />
+		<result property="replyCreateDt" column="REPLY_CREATE_DT" />
+		<result property="replyStatus" column="REPLY_STATUS" />
+		<result property="replyDepth" column="REPLY_DEPTH" />
+		<result property="memNo" column="MEM_NO" />
+		<result property="parentBoardNo" column="PARENT_BOARD_NO" />
+		<result property="parentReplyNo" column="PARENT_REPLY_NO" />
+		<result property="boardCode" column="BOARD_CD" />
+	</resultMap>
+	
+	<resultMap type="Member" id="member_rm">
+
+		<!-- DB의 기본 키 -->
+		<id property="memberNo" column="MEM_NO" />
+
+		<!-- DB의 일반 컬럼들 -->
+		<result property="memberId" column="MEM_ID" />
+		<result property="memberPwd" column="MEM_PW" />
+		<result property="memberName" column="MEM_NM" />
+		<result property="memberNickname" column="NICKNAME" />
+		<result property="memberPhone" column="PHONE" />
+		<result property="memberEmail" column="EMAIL" />
+		<result property="memberGender" column="GENDER" />
+		<result property="memberScsnFl" column="SCSN_FL" /> <!-- 탈퇴 여부 -->
+		<result property="memberSignDt" column="SIGN_DT" /> <!-- 가입일 -->
+		<result property="memberRating" column="RATING" /> <!-- 매너온도 -->
+		<result property="memberGrade" column="MEM_GRADE" /> <!-- 등급 -->
+		<result property="memberCertifiedFl" column="CERTIFIED_FL" /> <!-- 동네인증 여부 -->
+
+	</resultMap>
+	
+	<resultMap type="reportBoard" id="rboard_rm">
+		<id property="boardNo" column="BOARD_NO" />
+
+		<result property="boardTitle" column="BOARD_TITLE" />
+		<result property="boardContent" column="BOARD_CONTENT" />
+		<result property="boardCode" column="BOARD_CD" />
+		<result property="status" column="STATUS" />
+		<result property="reportNo" column="REPORT_NO" />
+		<result property="reportTitle" column="REPORT_TITLE" />
+		<result property="reportContent" column="REPORT_CONTENT" />
+		<result property="reportCategoryNm" column="CATEGORY_NM" />
+	</resultMap>
+	
+	<resultMap type="reportReply" id="rreply_rm">
+		<id property="reportNo" column="REPORT_NO" />
+
+		<result property="boardNo" column="PARENT_BOARD_NO" />
+		<result property="boardCode" column="BOARD_CD" />
+		<result property="status" column="REPLY_STATUS" />
+		<result property="replyNo" column="REPLY_NO" />
+		<result property="reportTitle" column="REPORT_TITLE" />
+		<result property="reportContent" column="REPORT_CONTENT" />
+		<result property="reportCategoryNm" column="CATEGORY_NM" />
+	</resultMap>
+	
+	
+		<resultMap type="MReply" id="Areply_rm">
+		<id property="replyNo" column="REPLY_NO" />
+		<result property="replyContent" column="REPLY_CONTENT" />
+		<result property="parentBoardNo" column="PARENT_BOARD_NO" />
+		<result property="boardCd" column="BOARD_CD" />
+		<result property="boardTitle" column="BOARD_TITLE" />
+		<result property="type" column="TYPE" />
+		<result property="createDt" column="CREATE_DT" />
+	</resultMap>
+
+	<!-- 특정 게시판 전체 게시글 수 조회 -->
+	<select id="getListCount" parameterType="_int" resultType="_int">
+		SELECT COUNT(*) FROM BOARD
+		WHERE STATUS = 'N'
+		AND BOARD_CD = #{type}
+	</select>
+	
+	<!-- 게시글 목록 조회 -->
+	<select id="selectList" parameterType="_int" resultMap="board_rm">
+		SELECT BOARD_NO, BOARD_TITLE, READ_COUNT,
+					 CATEGORY_CD, CREATE_DT, BOARD_CD
+		FROM BOARD
+		WHERE STATUS = 'N'
+		AND BOARD_CD = #{boardType}
+		ORDER BY BOARD_NO DESC
+	</select>
+	
+	<!-- 썸네일 목록 조회 -->
+	<select id="selectThumbnailList" parameterType="list" resultMap="attachment_rm">
+		SELECT * FROM BOARD_FILE
+		WHERE FILE_LEVEL = 1
+		 AND PARENT_BOARD_NO IN 
+		<foreach collection="list" item="board" open="(" close=")" separator=",">
+			#{board.boardNo}
+		</foreach> 
+	
+	</select>
+	
+	
+	<!-- 게시글 상세 조회  -->
+   <select id="selectBoard" parameterType="Board" resultMap="board_rm">
+   	SELECT BOARD_NO,BOARD_TITLE,BOARD_CONTENT,MEM_NO, READ_COUNT, 
+   					CREATE_DT,BOARD_CD,CATEGORY_CD
+   	FROM BOARD
+   	WHERE STATUS ='N'
+   	AND BOARD_NO = #{boardNo}
+   	AND BOARD_CD = #{boardCode}
+   </select>
+  
+  	<!-- 게시글 조회수 증가  -->
+  	<update id="increaseReadCount" parameterType="_int">
+  		UPDATE BOARD SET
+  		READ_COUNT = READ_COUNT + 1
+  		WHERE BOARD_NO = #{boardNo}
+  	</update>
+  	
+  	
+  	
+  	<!-- 게시글에 포함된 이미지 목록 조회 -->
+  	<select id="selectAttachmentList" parameterType="_int" resultMap="attachment_rm">
+  		SELECT * FROM BOARD_FILE
+  		WHERE PARENT_BOARD_NO = #{boardNo}
+  	</select>
+  	
+  	
+  	<!-- 다음 게시글 번호 얻어오기 -->
+  	<select id="selectNextNo" resultType="_int">
+  		SELECT SEQ_BNO.NEXTVAL FROM DUAL
+  	</select>
+  	
+  	<!-- 게시글 삽입  -->
+  	<insert id="insertBoard" parameterType="map">
+  		INSERT INTO BOARD
+  		VALUES(#{boardNo}, #{boardTitle}, #{boardContent},
+  					 DEFAULT, DEFAULT, DEFAULT, #{boardCode}, #{categoryCode}, 4)
+  	</insert>
+  	
+  	<!-- 파일 정보 삽입(List이용)  -->
+<!--   INSERT시 서브쿼리를 사용하면 서브쿼리의 결과 행 수 만큼 INSERT가 수행된다.
+			 더미 테이블을 이용해서 원하는 형태의 결과를 1행 조회하는 구문을 만들 수 있다.
+			 UNION ALL을 이용하면 컬럼 구성이 같은 RESULT SET 을 하나로 합칠 수 있다.
+			 서브쿼리를 이용한 INSERT시 시퀀스.NEXTVAL가 서브 쿼리에 포함되어 있다면 각 행이 삽입 될 때 마다 시퀀스 값이 증가함. -->
+  	<insert id="insertAttachmentList" parameterType="list">
+  		INSERT INTO BOARD_FILE
+  		SELECT SEQ_FNO.NEXTVAL, A.* FROM (
+  		
+  		<foreach collection="list" item="item" separator="UNION ALL">
+  			SELECT #{item.filePath} FILE_PATH,
+  						 #{item.fileName} FILE_NM,
+  						 #{item.parentBoardNo} PARENT_BOARD_NO,
+  						 #{item.fileLevel} FILE_LEVEL
+  			FROM DUAL
+  		</foreach>
+  		)A
+  	</insert>
+  	
+  	
+  	<!-- 파일 정보 삽입  -->
+  	<insert id="insertAttachment" parameterType="AAttachment">
+  		INSERT INTO BOARD_FILE
+  		VALUES(SEQ_FNO.NEXTVAL, #{filePath}, #{fileName}, #{parentBoardNo}, #{fileLevel})
+  	</insert>
+  	
+  	
+  	<!-- 게시글 삭제  -->
+  	<update id="deleteBoard" parameterType="_int">
+  		UPDATE BOARD SET
+  		STATUS = 'Y'
+  		WHERE BOARD_NO = #{boardNo}
+  	</update>
+   
+  
+
+	<!-- 게시글 목록 조회 -->
+	<select id="selectFaqList" parameterType="_int" resultMap="board_rm">
+		SELECT BOARD_NO, BOARD_TITLE, BOARD_CONTENT,
+					 CATEGORY_CD, BOARD_CD
+		FROM BOARD
+		WHERE STATUS = 'N'
+		AND BOARD_CD = #{type}
+		ORDER BY BOARD_NO DESC
+	</select>
+	
+	
+	<!-- 1:1 게시판 사용자별 게시글 수 조회 -->
+	<select id="getInquiryListCount" parameterType="_int" resultType="_int">
+		SELECT COUNT(*) FROM INQUIRY
+		WHERE DELETE_FL = 'N'
+	</select>
+	
+	<!-- 1:1게시판 관리자 게시글 수 조회 -->
+	<select id="getAllInquiryListCount" parameterType="_int" resultType="_int">
+		SELECT COUNT(*) FROM INQUIRY
+		WHERE DELETE_FL = 'N'
+	</select>
+	
+	
+	<!-- 1:1게시판 사용자별 게시글 목록 조회 -->
+	<select id="inquiryList" parameterType="map" resultMap="inquiry_rm">
+		SELECT INQUIRY_NO, INQUIRY_TITLE, INQUIRY_FL, CREATE_DT, CTGR_NM, MEM_NO
+		FROM INQUIRY
+		JOIN INQUIRY_CATEGORY USING (CTGR_CD)
+		WHERE MEM_NO = #{memberNo}
+		AND DELETE_FL = 'N'
+		ORDER BY INQUIRY_NO DESC
+	</select>
+	
+	<!-- 1:1게시판 관리자 게시글 목록 조회 -->
+	<select id="inquiryAllList" parameterType="map" resultMap="inquiry_rm">
+		SELECT INQUIRY_NO, INQUIRY_TITLE, INQUIRY_FL, CREATE_DT, CTGR_NM, MEM_NO
+		FROM INQUIRY
+		JOIN INQUIRY_CATEGORY USING (CTGR_CD)
+		WHERE DELETE_FL = 'N'
+		ORDER BY INQUIRY_NO DESC
+	</select>
+	
+	<!-- 1:1 다음 게시글 번호 얻어오기 -->
+  	<select id="selecinquirytNextNo" resultType="_int">
+  		SELECT SEQ_INO.NEXTVAL FROM DUAL
+  	</select>
+  	
+  	<!-- 1:1 게시글 삽입  -->
+  	<insert id="insertinquiry" parameterType="map">
+  		INSERT INTO INQUIRY
+  		VALUES(#{inquiryNo}, #{inquiryTitle}, #{inquiryContent},
+  					 DEFAULT, DEFAULT, #{categoryCode}, #{memberNo}, DEFAULT)
+  	</insert>
+  	
+  	<!-- 1:1 게시글 상세 조회  -->
+   <select id="selectInquiry" parameterType="inquiry" resultMap="inquiry_rm">
+   	SELECT INQUIRY_NO, INQUIRY_TITLE, INQUIRY_CONTENT, INQUIRY_FL, CREATE_DT, CTGR_NM, MEM_NO
+		FROM INQUIRY
+		JOIN INQUIRY_CATEGORY USING (CTGR_CD)
+        WHERE INQUIRY_NO = #{inquiryNo}
+        AND DELETE_FL = 'N'
+   </select>
+   
+   <!-- 게시글에 포함된 이미지 목록 조회 -->
+  	<select id="selectIAttachmentList" parameterType="_int" resultMap="Iattachment_rm">
+  		SELECT * FROM INQUIRY_FILE
+  		WHERE INQUIRY_NO = #{inquiryNo}
+  	</select>
+  	
+  	
+  	<!-- 1:1 게시글 삭제  -->
+  	<update id="deleteInquiry" parameterType="_int">
+  		UPDATE INQUIRY SET
+  		DELETE_FL = 'Y'
+  		WHERE INQUIRY_NO = #{inquiryNo}
+  	</update>
+  	
+  	
+  	<!-- 게시글 수정  -->
+  	<update id="updateBoard" parameterType="Board">
+  		UPDATE BOARD SET
+  		BOARD_TITLE = #{boardTitle},
+  		BOARD_CONTENT = #{boardContent},
+  		BOARD_CD = #{boardCode}
+  		WHERE BOARD_NO = #{boardNo}
+  	</update>
+  	
+  	<!-- 파일 정보 일괄 삭제  -->
+  	<delete id="deleteAttachmentList" parameterType="list">
+  		DELETE FROM BOARD_FILE
+  		WHERE FILE_NO IN
+  		<foreach collection="list" item="fileNo" open="(" close=")" separator=",">
+  			${fileNo}
+  		</foreach>
+  	</delete>
+  	
+
+  	
+  	<!-- 특정 게시판 전체 게시글 수 조회 -->
+	<select id="getAllListCount" parameterType="_int" resultType="_int">
+		SELECT COUNT(*) FROM V_DBOARD WHERE STATUS='Y'
+	</select>
+	
+	<!-- 게시글 목록 조회 -->
+	<select id="selectAllList" parameterType="_int" resultMap="board_rm">
+		SELECT * FROM V_DBOARD WHERE STATUS='Y'
+	</select>
+	
+	
+	
+	
+	
+	
+	
+  	<update id="recoverBoard1" parameterType="_int">
+  		UPDATE BOARD SET
+  		STATUS = 'N'
+  		WHERE BOARD_NO = #{boardNo}
+  	</update>
+  	
+  	<update id="recoverBoard2" parameterType="_int">
+  		UPDATE BOARD SET
+  		STATUS = 'N'
+  		WHERE BOARD_NO = #{boardNo}
+  	</update>
+  	
+  	<update id="recoverBoard3" parameterType="_int">
+  		UPDATE BOARD SET
+  		STATUS = 'N'
+  		WHERE BOARD_NO = #{boardNo}
+  	</update>
+  	
+  	<update id="recoverBoard4" parameterType="_int">
+  		UPDATE BOARD SET
+  		STATUS = 'N'
+  		WHERE BOARD_NO = #{boardNo}
+  	</update>
+  	
+  	<update id="recoverBoard6" parameterType="_int">
+  		UPDATE CAFE SET
+  		STATUS = 'N'
+  		WHERE CAFE_NO = #{boardNo}
+  	</update>
+  	
+  	<update id="recoverBoard7" parameterType="_int">
+  		UPDATE FRIEND SET
+  		STATUS = 'N'
+  		WHERE FRIEND_NO = #{boardNo}
+  	</update>
+  	
+  	<update id="recoverBoard8" parameterType="_int">
+  		UPDATE MARKET SET
+  		STATUS = 'N'
+  		WHERE MARKET_NO = #{boardNo}
+  	</update>
+  	
+  	<!-- 게시글 목록 조회 -->
+	<select id="selectAllReply" parameterType="_int" resultMap="reply_rm">
+		SELECT * FROM V_REPLY WHERE REPLY_STATUS='Y'
+	</select>
+	
+	<!-- 특정 게시판 전체 게시글 수 조회 -->
+	<select id="getReplyListCount" parameterType="_int" resultType="_int">
+		SELECT COUNT(*) FROM V_REPLY WHERE REPLY_STATUS='Y'
+	</select>
+	
+	<update id="recoverReply1" parameterType="_int">
+  		UPDATE BOARD_REPLY SET
+  		REPLY_STATUS = 'N'
+  		WHERE REPLY_NO = #{replyNo}
+  	</update>
+  	
+	<update id="recoverReply6" parameterType="_int">
+  		UPDATE CAFE_REPLY SET
+  		REPLY_STATUS = 'N'
+  		WHERE REPLY_NO = #{replyNo}
+  	</update>
+  	
+	<update id="recoverReply7" parameterType="_int">
+  		UPDATE FRIEND_REPLY SET
+  		REPLY_STATUS = 'N'
+  		WHERE REPLY_NO = #{replyNo}
+  	</update>
+  	
+	<update id="recoverReply8" parameterType="_int">
+  		UPDATE MARKET_REPLY SET
+  		REPLY_STATUS = 'N'
+  		WHERE REPLY_NO = #{replyNo}
+  	</update>
+  	
+  	
+  	<select id="getMemberPageInfo" parameterType="_int" resultType="_int">
+		SELECT COUNT(*) FROM MEMBER
+	</select>
+	
+	<select id="selectAllMember" parameterType="_int" resultMap="member_rm">
+		SELECT * FROM V_MEMBER
+	</select>
+	
+	<update id="deleteMember" parameterType="_int">
+  		UPDATE MEMBER SET
+  		SCSN_FL = 'N'
+  		WHERE MEM_NO = #{memNo}
+  	</update>
+  	
+	<update id="recoverMember" parameterType="_int">
+  		UPDATE MEMBER SET
+  		SCSN_FL = 'Y'
+  		WHERE MEM_NO = #{memNo}
+  	</update>
+  	
+  	
+  	<select id="getGradePageInfo" parameterType="_int" resultType="_int">
+		SELECT COUNT(*) FROM V_GMEMBER WHERE COUNT >=10
+	</select>
+	
+	<select id="selectGradeMember" parameterType="_int" resultMap="member_rm">
+		SELECT MEM_NO, NICKNAME, MEM_GRADE, SIGN_DT FROM V_GMEMBER WHERE COUNT >=10
+	</select>
+	
+	<update id="gradeMember" parameterType="map">
+  		UPDATE MEMBER SET
+  		MEM_GRADE = #{grade}
+  		WHERE MEM_NO = #{memNo}
+  	</update>
+  	
+  	<!-- 신고게시글 목록갯수 조회 -->
+  	<select id="getReportBoardPageInfo" parameterType="_int" resultType="_int">
+		SELECT COUNT(*) FROM V_RBOARD WHERE STATUS = 'N'
+	</select>
+	
+	<!-- 신고게시글 목록 조회 -->
+	<select id="selectReportBoard" parameterType="_int" resultMap="rboard_rm">
+		SELECT * FROM V_RBOARD WHERE STATUS = 'N'
+	</select>
+	
+	<!-- 신고게시글 복구 -->
+	<update id="recoverReportBoard" parameterType="map">
+		DELETE FROM
+		<choose>
+			<when test="boardCode == 1">
+				REPORT_BOARD
+			</when>
+			<when test="boardCode == 2">
+				REPORT_BOARD
+			</when>
+			<when test="boardCode == 6">
+				REPORT_CAFE
+			</when>
+			<when test="boardCode == 7">
+				REPORT_FRIEND
+			</when>
+			<when test="boardCode == 8">
+				REPORT_MARKET
+			</when>
+		</choose>
+  		WHERE REPORT_NO = #{reportNo}
+	</update>
+	
+	<!-- 신고게시글 삭제 -->
+	<update id="deleteReportBoard" parameterType="map">
+		UPDATE
+		<choose>
+			<when test="boardCode == 1">
+				BOARD SET STATUS = 'Y' WHERE BOARD_NO = #{boardNo}
+			</when>
+			<when test="boardCode == 2">
+				BOARD SET STATUS = 'Y' WHERE BOARD_NO = #{boardNo}
+			</when>
+			<when test="boardCode == 6">
+				CAFE SET STATUS = 'Y' WHERE CAFE_NO = #{boardNo}
+			</when>
+			<when test="boardCode == 7">
+				FRIEND SET BOARD_STATUS = 'Y' WHERE FRIEND_NO = #{boardNo}
+			</when>
+			<when test="boardCode == 8">
+				MARKET SET MARKET_FL = 'Y' WHERE MARKET_NO = #{boardNo}
+			</when>
+		</choose>
+  		
+	</update>
+	
+	
+	<!-- 신고댓글 갯수 조회 -->
+	<select id="getReportReplyPageInfo" parameterType="_int" resultType="_int">
+		SELECT COUNT(*) FROM V_RREPLY WHERE REPLY_STATUS = 'N'
+	</select>
+	
+	<!-- 신고댓글 목록 조회 -->
+	<select id="selectReportReply" parameterType="_int" resultMap="rreply_rm">
+		SELECT * FROM V_RREPLY WHERE REPLY_STATUS = 'N'
+	</select>
+	
+	<!-- 신고댓글 복구 -->
+	<update id="recoverReportReply" parameterType="map">
+		DELETE FROM 
+		<choose>
+			<when test="boardCode == 1">
+				REPORT_REPLY
+			</when>
+			<when test="boardCode == 2">
+				REPORT_REPLY
+			</when>
+			<when test="boardCode == 6">
+				REPORT_REPLY_CAFE
+			</when>
+			<when test="boardCode == 7">
+				FRIEND_REPORT_REPLY
+			</when>
+			<when test="boardCode == 8">
+				MARKET_REPORT_REPLY
+			</when>
+		</choose>
+  		WHERE REPORT_NO = #{reportNo}
+	</update>
+	
+	<!-- 신고댓글 삭제 -->
+	<update id="deleteReportReply" parameterType="map">
+		UPDATE
+		<choose>
+			<when test="boardCode == 1">
+				BOARD_REPLY SET REPLY_STATUS = 'Y' WHERE REPLY_NO = #{replyNo}
+			</when>
+			<when test="boardCode == 2">
+				BOARD_REPLY SET REPLY_STATUS = 'Y' WHERE REPLY_NO = #{replyNo}
+			</when>
+			<when test="boardCode == 6">
+				CAFE_REPLY SET REPLY_STATUS = 'Y' WHERE REPLY_NO = #{replyNo}
+			</when>
+			<when test="boardCode == 7">
+				FRIEND_REPLY SET REPLY_STATUS = 'Y' WHERE REPLY_NO = #{replyNo}
+			</when>
+			<when test="boardCode == 8">
+				MARKET_REPLY SET REPLY_STATUS = 'Y' WHERE REPLY_NO = #{replyNo}
+			</when>
+		</choose>
+	</update>
+	
+	
+	
+	<!-- 검색 조건에 맞는 게시글 목록 -->
+	<select id="selectSearchList" parameterType="String" resultMap="board_rm">
+		SELECT * FROM BOARD
+		WHERE STATUS = 'N'
+		AND BOARD_CD ='5'
+
+		<!-- 넘어오는 값,, ct(카테고리), sk, sv , sort(정렬) -->
+		<if test="ct != null">
+
+			<choose>
+				<when test="ct == 1">
+					AND CATEGORY_CD = 51
+				</when>
+				<when test="ct== 2">
+					AND CATEGORY_CD = 52
+				</when>
+				<when test="ct == 3">
+					AND CATEGORY_CD = 53
+				</when>
+			</choose>
+			ORDER BY BOARD_NO DESC
+		</if>
+	</select>
+	
+	
+	
+	<!-- 검색 조건에 맞는 삭제게시글 수 조회 -->
+	<select id="getSearchListCount" parameterType="String" resultType="_int">
+		SELECT COUNT(*) FROM V_DBOARD 
+		WHERE STATUS='Y'
+		<if test="ct != null">
+			<choose>
+				<when test="ct == 1">
+					AND BOARD_CD = 1
+				</when>
+				<when test="ct== 2">
+					AND BOARD_CD = 2
+				</when>
+				<when test="ct == 3">
+					AND BOARD_CD = 3
+				</when>
+				<when test="ct == 4">
+					AND BOARD_CD = 4
+				</when>
+				<when test="ct == 6">
+					AND BOARD_CD = 6
+				</when>
+				<when test="ct == 7">
+					AND BOARD_CD = 7
+				</when>
+				<when test="ct == 8">
+					AND BOARD_CD = 8
+				</when>
+			</choose>
+		</if>
+	</select>
+	
+	
+	<!-- 검색 조건에 맞는 게시글 목록 -->
+	<select id="selectBoardSearchList" parameterType="String" resultMap="board_rm">
+		SELECT * FROM V_DBOARD
+		WHERE STATUS = 'Y'
+		<!-- 넘어오는 값,, ct(카테고리), sk, sv , sort(정렬) -->
+		<if test="ct != null">
+
+			<choose>
+				<when test="ct == 1">
+					AND BOARD_CD = 1
+				</when>
+				<when test="ct== 2">
+					AND BOARD_CD = 2
+				</when>
+				<when test="ct == 3">
+					AND BOARD_CD = 3
+				</when>
+				<when test="ct == 4">
+					AND BOARD_CD = 4
+				</when>
+				<when test="ct == 6">
+					AND BOARD_CD = 6
+				</when>
+				<when test="ct == 7">
+					AND BOARD_CD = 7
+				</when>
+				<when test="ct == 8">
+					AND BOARD_CD = 8
+				</when>
+			</choose>
+		</if>
+	</select>
+	
+	
+	<!-- 검색 조건에 맞는 게시글 목록 -->
+	<select id="getSearchRBoardListCount" parameterType="String" resultType="_int">
+		SELECT COUNT(*) FROM V_RBOARD 
+		WHERE STATUS='N'
+		<if test="ct != null">
+			<choose>
+				<when test="ct == 1">
+					AND CATEGORY_NM = '욕설, 비방, 차별, 혐오'
+				</when>
+				<when test="ct== 2">
+					AND CATEGORY_NM = '홍보, 영리목적'
+				</when>
+				<when test="ct == 3">
+					AND CATEGORY_NM = '불법 정보'
+				</when>
+				<when test="ct == 4">
+					AND CATEGORY_NM = '음란, 청소년 유해'
+				</when>
+				<when test="ct == 5">
+					AND CATEGORY_NM = '개인 정보 노출, 유포, 거래'
+				</when>
+				<when test="ct == 6">
+					AND CATEGORY_NM = '도배, 스팸'
+				</when>
+				<when test="ct == 7">
+					AND CATEGORY_NM = '기타'
+				</when>
+			</choose>
+		</if>
+	</select>
+	
+	<!-- 검색 조건에 맞는 게시글 목록 -->
+	<select id="selectSearchRBoardList" parameterType="String" resultMap="rboard_rm">
+		SELECT * FROM V_RBOARD
+		WHERE STATUS = 'N'
+		<!-- 넘어오는 값,, ct(카테고리), sk, sv , sort(정렬) -->
+		<if test="ct != null">
+
+			<choose>
+				<when test="ct == 1">
+					AND CATEGORY_NM = '욕설, 비방, 차별, 혐오'
+				</when>
+				<when test="ct== 2">
+					AND CATEGORY_NM = '홍보, 영리목적'
+				</when>
+				<when test="ct == 3">
+					AND CATEGORY_NM = '불법 정보'
+				</when>
+				<when test="ct == 4">
+					AND CATEGORY_NM = '음란, 청소년 유해'
+				</when>
+				<when test="ct == 5">
+					AND CATEGORY_NM = '개인 정보 노출, 유포, 거래'
+				</when>
+				<when test="ct == 6">
+					AND CATEGORY_NM = '도배, 스팸'
+				</when>
+				<when test="ct == 7">
+					AND CATEGORY_NM = '기타'
+				</when>
+			</choose>
+		</if>
+	</select>
+	
+	
+	
+	<!-- 검색 조건에 맞는 삭제게시글 수 조회 -->
+	<select id="getSearchReplyListCount" parameterType="String" resultType="_int">
+		SELECT COUNT(*) FROM V_REPLY
+		WHERE REPLY_STATUS='Y'
+		<if test="ct != null">
+			<choose>
+				<when test="ct == 1">
+					AND BOARD_CD = 1
+				</when>
+				<when test="ct== 2">
+					AND BOARD_CD = 2
+				</when>
+				<when test="ct == 3">
+					AND BOARD_CD = 3
+				</when>
+				<when test="ct == 4">
+					AND BOARD_CD = 4
+				</when>
+				<when test="ct == 6">
+					AND BOARD_CD = 6
+				</when>
+				<when test="ct == 7">
+					AND BOARD_CD = 7
+				</when>
+				<when test="ct == 8">
+					AND BOARD_CD = 8
+				</when>
+			</choose>
+		</if>
+	</select>
+	
+	
+	<!-- 검색 조건에 맞는 게시글 목록 -->
+	<select id="selectSearchReplyList" parameterType="String" resultMap="reply_rm">
+		SELECT * FROM V_REPLY
+		WHERE REPLY_STATUS = 'Y'
+		<!-- 넘어오는 값,, ct(카테고리), sk, sv , sort(정렬) -->
+		<if test="ct != null">
+
+			<choose>
+				<when test="ct == 1">
+					AND BOARD_CD = 1
+				</when>
+				<when test="ct== 2">
+					AND BOARD_CD = 2
+				</when>
+				<when test="ct == 3">
+					AND BOARD_CD = 3
+				</when>
+				<when test="ct == 4">
+					AND BOARD_CD = 4
+				</when>
+				<when test="ct == 6">
+					AND BOARD_CD = 6
+				</when>
+				<when test="ct == 7">
+					AND BOARD_CD = 7
+				</when>
+				<when test="ct == 8">
+					AND BOARD_CD = 8
+				</when>
+			</choose>
+		</if>
+	</select>
+	
+	
+	
+	
+	<!-- 검색 조건에 맞는 게시글 목록 -->
+	 <select id="getSearchRReplyListCount" parameterType="String" resultType="_int">
+		SELECT COUNT(*) FROM V_RREPLY
+		WHERE REPLY_STATUS='N'
+		<if test="ct != null">
+			<choose>
+				<when test="ct == 1">
+					AND CATEGORY_NM = '욕설, 비방, 차별, 혐오'
+				</when>
+				<when test="ct== 2">
+					AND CATEGORY_NM = '홍보, 영리목적'
+				</when>
+				<when test="ct == 3">
+					AND CATEGORY_NM = '불법 정보'
+				</when>
+				<when test="ct == 4">
+					AND CATEGORY_NM = '음란, 청소년 유해'
+				</when>
+				<when test="ct == 5">
+					AND CATEGORY_NM = '개인 정보 노출, 유포, 거래'
+				</when>
+				<when test="ct == 6">
+					AND CATEGORY_NM = '도배, 스팸'
+				</when>
+				<when test="ct == 7">
+					AND CATEGORY_NM = '기타'
+				</when>
+			</choose>
+		</if>
+	</select> 
+	
+	
+	<!-- 검색 조건에 맞는 게시글 목록 -->
+	 <select id="selectSearchRReplyList" parameterType="String" resultMap="rreply_rm">
+		SELECT * FROM V_RREPLY
+		WHERE REPLY_STATUS = 'N'
+		<if test="ct != null">
+
+			<choose>
+				<when test="ct == 1">
+					AND CATEGORY_NM = '욕설, 비방, 차별, 혐오'
+				</when>
+				<when test="ct== 2">
+					AND CATEGORY_NM = '홍보, 영리목적'
+				</when>
+				<when test="ct == 3">
+					AND CATEGORY_NM = '불법 정보'
+				</when>
+				<when test="ct == 4">
+					AND CATEGORY_NM = '음란, 청소년 유해'
+				</when>
+				<when test="ct == 5">
+					AND CATEGORY_NM = '개인 정보 노출, 유포, 거래'
+				</when>
+				<when test="ct == 6">
+					AND CATEGORY_NM = '도배, 스팸'
+				</when>
+				<when test="ct == 7">
+					AND CATEGORY_NM = '기타'
+				</when>
+			</choose>
+		</if>
+	</select> 
+	
+	
+	<select id="getSearchMemberListCount" parameterType="String" resultType="_int">
+		SELECT COUNT(*) FROM V_MEMBER
+		<if test="ct != null">
+			<choose>
+				<when test="ct == 1">
+					AND MEM_GRADE = 'F'
+				</when>
+				<when test="ct== 2">
+					AND MEM_GRADE = 'S'
+				</when>
+				<when test="ct == 3">
+					AND MEM_GRADE = 'T'
+				</when>
+			</choose>
+		</if>
+	</select> 
+	
+	<select id="selectSearchmemberList" parameterType="String" resultMap="member_rm">
+		SELECT * FROM V_MEMBER
+		<if test="ct != null">
+			<choose>
+				<when test="ct == 1">
+					AND MEM_GRADE = 'F'
+				</when>
+				<when test="ct== 2">
+					AND MEM_GRADE = 'S'
+				</when>
+				<when test="ct == 3">
+					AND MEM_GRADE = 'T'
+				</when>
+			</choose>
+		</if>
+	</select>
+	
+	
+	<select id="getSearchmemberGradePageInfo" parameterType="String" resultType="_int">
+	SELECT COUNT(*) FROM V_GMEMBER 
+	WHERE COUNT >=10
+	<if test="ct != null">
+			<choose>
+				<when test="ct == 1">
+					AND MEM_GRADE = 'F'
+				</when>
+				<when test="ct== 2">
+					AND MEM_GRADE = 'S'
+				</when>
+				<when test="ct == 3">
+					AND MEM_GRADE = 'T'
+				</when>
+			</choose>
+		</if>
+	</select>
+	
+	<select id="selectSearchmemberGradeList" parameterType="String" resultMap="member_rm">
+		SELECT MEM_NO, NICKNAME, MEM_GRADE, SIGN_DT FROM V_GMEMBER 
+		WHERE COUNT >=10
+		<if test="ct != null">
+			<choose>
+				<when test="ct == 1">
+					AND MEM_GRADE = 'F'
+				</when>
+				<when test="ct== 2">
+					AND MEM_GRADE = 'S'
+				</when>
+				<when test="ct == 3">
+					AND MEM_GRADE = 'T'
+				</when>
+			</choose>
+		</if>
+	</select>
+	
+	
+	
+	<!-- 내가 쓴 글 페이징 -->
+<select id="getABoarPageInfo" parameterType="_int" resultType="_int">
+SELECT COUNT(*) FROM
+	(SELECT BOARD_NO, BOARD_TITLE, BOARD_CD, '고객센터' TYPE, CREATE_DT
+	FROM BOARD A
+	JOIN MEMBER B ON(A.MEM_NO = B.MEM_NO)
+	WHERE B.MEM_NO = 4
+	AND BOARD_CD=3
+	UNION ALL
+    SELECT BOARD_NO, BOARD_TITLE, BOARD_CD, '이벤트' TYPE, CREATE_DT
+	FROM BOARD A
+	JOIN MEMBER B ON(A.MEM_NO = B.MEM_NO)
+	WHERE B.MEM_NO = 4
+	AND BOARD_CD=4
+	UNION ALL
+    SELECT BOARD_NO, BOARD_TITLE, BOARD_CD, '자유게시판' TYPE, CREATE_DT
+	FROM BOARD A
+	JOIN MEMBER B ON(A.MEM_NO = B.MEM_NO)
+	WHERE B.MEM_NO = 4
+	AND BOARD_CD=1
+	UNION ALL
+	SELECT BOARD_NO, BOARD_TITLE, BOARD_CD, '후기게시판' TYPE, CREATE_DT
+	FROM BOARD A
+	JOIN MEMBER B ON(A.MEM_NO = B.MEM_NO)
+	WHERE B.MEM_NO = 4
+	AND BOARD_CD=2
+	UNION ALL
+	SELECT CAFE_NO, CAFE_TITLE, 6, '맛집게시판' TYPE, CREATE_DT
+	FROM CAFE A
+	JOIN MEMBER B ON(A.MEM_NO = B.MEM_NO)
+	WHERE B.MEM_NO = 4
+	UNION ALL
+	SELECT FRIEND_NO, FRIEND_TITLE, 7, '친구찾기' TYPE, CREATE_DT
+	FROM FRIEND A
+	JOIN MEMBER B ON(A.MEM_NO = B.MEM_NO)
+	WHERE B.MEM_NO = 4
+	UNION ALL
+	SELECT MARKET_NO, MARKET_TITLE, 8, '사고팔고' TYPE, CREATE_DT
+	FROM MARKET A
+	JOIN MEMBER B ON(A.MEM_NO = B.MEM_NO)
+	WHERE B.MEM_NO = 4)
+
+</select>
+
+<!-- 내가 쓴 글 리스트 -->
+<select id="selectABoardList" parameterType="_int" resultMap="board_rm">
+	SELECT BOARD_NO, BOARD_TITLE, BOARD_CD, '고객센터' TYPE, CREATE_DT
+	FROM BOARD A
+	JOIN MEMBER B ON(A.MEM_NO = B.MEM_NO)
+	WHERE B.MEM_NO = 4
+	AND BOARD_CD=3
+	UNION ALL
+    SELECT BOARD_NO, BOARD_TITLE, BOARD_CD, '이벤트' TYPE, CREATE_DT
+	FROM BOARD A
+	JOIN MEMBER B ON(A.MEM_NO = B.MEM_NO)
+	WHERE B.MEM_NO = 4
+	AND BOARD_CD=4
+	UNION ALL
+    SELECT BOARD_NO, BOARD_TITLE, BOARD_CD, '자유게시판' TYPE, CREATE_DT
+	FROM BOARD A
+	JOIN MEMBER B ON(A.MEM_NO = B.MEM_NO)
+	WHERE B.MEM_NO = 4
+	AND BOARD_CD=1
+	UNION ALL
+	SELECT BOARD_NO, BOARD_TITLE, BOARD_CD, '후기게시판' TYPE, CREATE_DT
+	FROM BOARD A
+	JOIN MEMBER B ON(A.MEM_NO = B.MEM_NO)
+	WHERE B.MEM_NO = 4
+	AND BOARD_CD=2
+	UNION ALL
+	SELECT CAFE_NO, CAFE_TITLE, 6, '맛집게시판' TYPE, CREATE_DT
+	FROM CAFE A
+	JOIN MEMBER B ON(A.MEM_NO = B.MEM_NO)
+	WHERE B.MEM_NO = 4
+	UNION ALL
+	SELECT FRIEND_NO, FRIEND_TITLE, 7, '친구찾기' TYPE, CREATE_DT
+	FROM FRIEND A
+	JOIN MEMBER B ON(A.MEM_NO = B.MEM_NO)
+	WHERE B.MEM_NO = 4
+	UNION ALL
+	SELECT MARKET_NO, MARKET_TITLE, 8, '사고팔고' TYPE, CREATE_DT
+	FROM MARKET A
+	JOIN MEMBER B ON(A.MEM_NO = B.MEM_NO)
+	WHERE B.MEM_NO = 4
+</select>
+
+<!-- 내가 쓴 댓글 페이징 -->
+<select id="getAReplyPageInfo" parameterType="_int" resultType="_int">
+ SELECT COUNT(*) FROM
+	(SELECT REPLY_NO, REPLY_CONTENT, PARENT_BOARD_NO, BOARD_CD, BOARD_TITLE, '자유게시판' TYPE, CREATE_DT
+	FROM BOARD_REPLY A
+	JOIN BOARD C ON (A.PARENT_BOARD_NO = C.BOARD_NO)
+	JOIN MEMBER B ON(C.MEM_NO = B.MEM_NO)
+	WHERE A.MEM_NO = 4
+	AND BOARD_CD=1
+	AND REPLY_STATUS = 'N'
+	UNION ALL
+	SELECT REPLY_NO, REPLY_CONTENT, PARENT_BOARD_NO, BOARD_CD, BOARD_TITLE, '후기게시판' TYPE, CREATE_DT
+	FROM BOARD_REPLY A
+	JOIN MEMBER B ON(A.MEM_NO = B.MEM_NO)
+	JOIN BOARD C ON (A.PARENT_BOARD_NO = C.BOARD_NO)
+	WHERE A.MEM_NO = 4
+	AND BOARD_CD=2
+	AND REPLY_STATUS = 'N'
+	UNION ALL
+	SELECT REPLY_NO, REPLY_CONTENT, A.CAFE_NO, 6, CAFE_TITLE, '맛집게시판' TYPE, REPLY_CREATE_DT
+	FROM CAFE_REPLY A
+	JOIN MEMBER B ON(A.MEM_NO = B.MEM_NO)
+	JOIN CAFE C ON (A.CAFE_NO = C.CAFE_NO)
+	WHERE B.MEM_NO = 4
+	AND REPLY_STATUS = 'N'
+	UNION ALL
+	SELECT REPLY_NO, REPLY_CONTENT, PARENT_FRIEND_NO, 6, FRIEND_TITLE, '친구찾기' TYPE, REPLY_CREATE_DT
+	FROM FRIEND_REPLY A
+	JOIN MEMBER B ON(A.MEM_NO = B.MEM_NO)
+	JOIN FRIEND C ON (A.PARENT_FRIEND_NO = C.FRIEND_NO)
+	WHERE B.MEM_NO = 4
+	AND REPLY_STATUS = 'N'
+	UNION ALL
+	SELECT REPLY_NO, REPLY_CONTENT, PARENT_MARKET_NO, 6, MARKET_TITLE, '사고팔고' TYPE, REPLY_CREATE_DT
+	FROM MARKET_REPLY A
+	JOIN MEMBER B ON(A.MEM_NO = B.MEM_NO)
+	JOIN MARKET C ON (A.PARENT_MARKET_NO = C.MARKET_NO)
+	WHERE B.MEM_NO = 4
+	AND REPLY_STATUS = 'N')
+</select>
+
+
+<!-- 내가 쓴 댓글 리스트 -->
+<select id="selectAReplyList" parameterType="_int" resultMap="Areply_rm"> 
+	SELECT REPLY_NO, REPLY_CONTENT, PARENT_BOARD_NO, BOARD_CD, BOARD_TITLE, '자유게시판' TYPE, CREATE_DT
+	FROM BOARD_REPLY A
+	JOIN BOARD C ON (A.PARENT_BOARD_NO = C.BOARD_NO)
+	JOIN MEMBER B ON(C.MEM_NO = B.MEM_NO)
+	WHERE A.MEM_NO = 4
+	AND BOARD_CD=1
+	AND REPLY_STATUS = 'N'
+	UNION ALL
+	SELECT REPLY_NO, REPLY_CONTENT, PARENT_BOARD_NO, BOARD_CD, BOARD_TITLE, '후기게시판' TYPE, CREATE_DT
+	FROM BOARD_REPLY A
+	JOIN MEMBER B ON(A.MEM_NO = B.MEM_NO)
+	JOIN BOARD C ON (A.PARENT_BOARD_NO = C.BOARD_NO)
+	WHERE A.MEM_NO = 4
+	AND BOARD_CD=2
+	AND REPLY_STATUS = 'N'
+	UNION ALL
+	SELECT REPLY_NO, REPLY_CONTENT, A.CAFE_NO, 6, CAFE_TITLE, '맛집게시판' TYPE, REPLY_CREATE_DT
+	FROM CAFE_REPLY A
+	JOIN MEMBER B ON(A.MEM_NO = B.MEM_NO)
+	JOIN CAFE C ON (A.CAFE_NO = C.CAFE_NO)
+	WHERE B.MEM_NO = 4
+	AND REPLY_STATUS = 'N'
+	UNION ALL
+	SELECT REPLY_NO, REPLY_CONTENT, PARENT_FRIEND_NO, 6, FRIEND_TITLE, '친구찾기' TYPE, REPLY_CREATE_DT
+	FROM FRIEND_REPLY A
+	JOIN MEMBER B ON(A.MEM_NO = B.MEM_NO)
+	JOIN FRIEND C ON (A.PARENT_FRIEND_NO = C.FRIEND_NO)
+	WHERE B.MEM_NO = 4
+	AND REPLY_STATUS = 'N'
+	UNION ALL
+	SELECT REPLY_NO, REPLY_CONTENT, PARENT_MARKET_NO, 6, MARKET_TITLE, '사고팔고' TYPE, REPLY_CREATE_DT
+	FROM MARKET_REPLY A
+	JOIN MEMBER B ON(A.MEM_NO = B.MEM_NO)
+	JOIN MARKET C ON (A.PARENT_MARKET_NO = C.MARKET_NO)
+	WHERE B.MEM_NO = 4
+	AND REPLY_STATUS = 'N'
+</select>
+</mapper>
