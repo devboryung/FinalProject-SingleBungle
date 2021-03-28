@@ -1,0 +1,354 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="marketMapper">
+
+	 <resultMap type="Market" id="market_rm">
+		<id property="marketNo" column="MARKET_NO" />
+ 
+		<result property="marketTitle" column="MARKET_TITLE" />
+		<result property="marketContent" column="MARKET_CONTENT" />
+		<result property="createDt" column="CREATE_DT" />
+		<result property="readCount" column="READ_COUNT" />
+		<result property="marketFl" column="MARKET_FL" />
+		<result property="price" column="PRICE" />
+		<result property="status" column="STATUS" />
+		<result property="deliveryCharge" column="DELIVERY_CHARGE" />
+		<result property="memNo" column="MEM_NO" />
+		<result property="categoryCd" column="CATEGORY_CD" />
+		<result property="transactionCategory" column="TRANSACTION_CATEGORY" />
+		<result property="transactionStatus" column="TRANSACTION_STATUS" />
+		<result property="nickname" column="NICKNAME" />
+		<result property="address" column="ADDRESS" />
+		<result property="categoryNm" column="CATEGORY_NM" />
+		<result property="likes" column="LIKES" />
+		<result property="itemCount" column="ITEMCOUNT" />
+		<result property="certifiedFl" column="CERTIFIED_FL" />
+		
+	</resultMap>
+	
+	
+	<resultMap type="MarketLike" id="likes_rm">
+		<id property="memberNo" column="MEM_NO"/>
+		<id property="marketNo" column="MARKET_NO"/>
+	</resultMap>
+	
+	<resultMap type="MarketAttachment" id="attachment_rm">
+		<id property="fileNo" column="FILE_NO" />
+		
+		<result property="filePath" column="FILE_PATH" />
+		<result property="fileName" column="FILE_NAME" />
+		<result property="fileLevel" column="FILE_LEVEL" />
+		<result property="parentMarketNo" column="PARENT_MARKET_NO" />
+	</resultMap>
+
+
+	<resultMap type="MarketReport" id="report_rm">
+		<id property="reportNo" column="REPORT_NO" />
+		<id property="reportTitle" column="REPORT_TITLE" />
+		<id property="reportContent" column="REPORT_CONTENT" />
+		<id property="memberNo" column="MEM_NO" />
+		<id property="categoryCode" column="CATEGORY_CD" />
+		<id property="marketNo" column="MARKET_NO" />
+	</resultMap>
+	
+	<resultMap type="MarketReplyReport" id="replyReport_rm">
+		<id property="reportNo" column="REPORT_NO" />
+		<id property="reportTitle" column="REPORT_TITLE" />
+		<id property="reportContent" column="REPORT_CONTENT" />
+		<id property="memberNo" column="MEM_NO" />
+		<id property="categoryCode" column="CATEGORY_CD" />
+		<id property="replyNo" column="REPLY_NO" />
+		<id property="marketNo" column="MARKET_NO" />
+	</resultMap>
+
+
+	<!-- 전체 게시글 수 조회 -->
+	<select id="getListCount" resultType="_int">
+		SELECT COUNT(*) FROM V_MARKET
+		WHERE MARKET_FL = 'N'
+	</select>
+	
+
+	<!-- 게시글 목록 조회 -->
+	<select id="selectList" parameterType="_int" resultMap="market_rm">
+		SELECT MARKET_NO, MARKET_TITLE, CATEGORY_NM,  PRICE, TRANSACTION_STATUS, TRANSACTION_CATEGORY
+		,LIKES
+		FROM V_MARKET M
+		WHERE MARKET_FL = 'N'
+		ORDER BY MARKET_NO DESC
+	</select>
+	 
+	 
+	 <!-- 썸네일 목록 조회 -->
+	 <select id="selectThumbnailList" parameterType="list" resultMap="attachment_rm">
+	 	SELECT * FROM MARKET_FILE
+	 	WHERE FILE_LEVEL = 0
+	 	AND PARENT_MARKET_NO IN
+	 	<foreach collection="list" item="market" open="(" close=")" separator=",">
+	 		#{market.marketNo}
+	 	</foreach>
+	 	
+	 	
+	 </select>
+	 
+	 <!-- 상세조회  -->
+	 <select id="selectMarket" resultMap="market_rm" parameterType="Market">
+	 		SELECT * FROM V_MARKET
+	 		WHERE MARKET_FL = 'N'
+	 		AND MARKET_NO = #{marketNo}
+	 </select>
+	
+	<!-- 게시글에 포함된 이미지 목록 조회 -->
+	<select id="selectAttachmentList" parameterType="_int" resultMap="attachment_rm">
+		SELECT * FROM MARKET_FILE
+		WHERE PARENT_MARKET_NO = #{boardNo}
+		ORDER BY FILE_LEVEL
+	</select>
+	
+	<!-- 좋아요 확인 여부 -->
+	<select id="selectLikePushed" parameterType="map" resultType="_int">
+		SELECT COUNT(*) FROM MARKET_LIKE
+		WHERE MEM_NO = #{memberNo}
+		AND MARKET_NO = #{marketNo}
+	</select>
+	
+	<!-- 조회수 증가 -->
+	<update id="increaseReadCount" parameterType="_int">
+		UPDATE MARKET SET
+		READ_COUNT = READ_COUNT + 1
+		WHERE MARKET_NO = #{marketNo}
+	</update>
+	
+	<!-- 좋아요 리스트 -->
+	<select id="selectLike" parameterType="_int" resultMap="likes_rm">
+		SELECT MARKET_NO
+		FROM MARKET_LIKE 
+		WHERE MEM_NO = #{memberNo}
+	</select>
+	
+	
+	<!-- 좋아요 증가  -->
+	<insert id="increaseLike" parameterType="map">
+		INSERT INTO MARKET_LIKE VALUES (#{memberNo}, #{marketNo})
+	</insert>
+	
+	<!-- 좋아요 감소 -->
+	<delete id="decreaseLike" parameterType="map">
+		DELETE FROM MARKET_LIKE WHERE MEM_NO = #{memberNo} AND MARKET_NO = #{marketNo}
+	</delete>
+
+	<!-- 다음 게시글 번호 조회 -->
+	<select id="selectNextNo" resultType="_int">
+		SELECT SEQ_MBNO.NEXTVAL FROM DUAL
+	</select>
+	
+	<!-- 게시글 등록  -->
+	<insert id="insertMarket" parameterType="Market">
+		INSERT INTO MARKET VALUES
+		(#{marketNo}, #{marketTitle}, #{marketContent}, DEFAULT, DEFAULT, DEFAULT, #{price}, #{status},
+		#{deliveryCharge}, #{memNo}, #{categoryCd}, #{transactionCategory}, DEFAULT, #{itemCount})
+	</insert>
+	
+	
+	<!-- 파일 정보 삽입  -->
+	<insert id="insertAttachmentList" parameterType="list">
+		INSERT INTO MARKET_FILE
+		SELECT SEQ_MFNO.NEXTVAL, A.* FROM (
+			
+			<foreach collection="list" item="item" separator="UNION ALL">
+				SELECT #{item.filePath} FILE_PATH,
+							 #{item.fileName} FILE_NAME,
+							 #{item.parentMarketNo} PARENT_MARKET_NO,
+							 #{item.fileLevel} FILE_LEVEL
+				FROM DUAL
+			</foreach>
+			)A
+	</insert>
+	
+	<!-- 예약중으로 변경  -->
+	<update id="reservation" parameterType="map">
+		UPDATE MARKET SET 
+		TRANSACTION_STATUS = #{type}
+		WHERE MARKET_NO = #{marketNo}
+	</update>
+
+	<!-- 검색 조건에 맞는 게시글 수 조회 -->
+	<select id="getSearchListCount" resultType="_int">
+		SELECT COUNT(*) FROM V_MARKET
+		WHERE MARKET_FL = 'N'
+		<!-- 넘어오는 값,, ct(카테고리), sk, sv , sort(정렬) -->
+		<if test="ct != null and ct != 0">
+					AND TRANSACTION_CATEGORY = #{ct}
+		</if>
+		<if test="sv != null">
+			<bind name="val" value="'%' + sv + '%'" />
+			AND (MARKET_TITLE like #{val} OR MARKET_CONTENT like #{val})
+		</if>
+		
+	</select>	
+	
+	
+	<!--  검색 조건에 맞는 게시글 목록 -->
+	<select id="selectSearchList" parameterType="MarketSearch" resultMap="market_rm">
+		SELECT * FROM V_MARKET
+		WHERE MARKET_FL = 'N' 
+
+		<!-- 넘어오는 값,, ct(카테고리), sk, sv , sort(정렬) -->
+					<if test="ct != null and ct != 0">
+					AND TRANSACTION_CATEGORY = #{ct}
+		</if>
+		<if test="sv != null">
+		<bind name="val" value="'%' + sv + '%'" />
+		AND (MARKET_TITLE like #{val} OR MARKET_CONTENT like #{val})
+		</if>
+
+		<if test="sort != null">
+			<choose>
+				<when test="sort == 'like'">
+					ORDER BY LIKES DESC, MARKET_NO DESC
+				</when>
+				<when test="sort == 'new'">
+					ORDER BY MARKET_NO DESC
+				</when>
+				<when test="sort =='rowSort'">
+					ORDER BY to_number(PRICE) ASC, MARKET_NO DESC
+				</when>
+				<otherwise>
+					ORDER BY to_number(PRICE) DESC , MARKET_NO DESC
+				</otherwise>
+			</choose>
+		</if>
+		
+		<if test="sort == null">
+			ORDER BY MARKET_NO DESC
+		</if>
+	</select>
+	
+	
+	<!-- 게시글 신고 다음 번호 조회 -->
+	<select id="selectReportNo" resultType="_int">
+		SELECT SEQ_RNO.NEXTVAL FROM DUAL
+	</select>
+	
+	<!-- 게시글 신고  -->
+	<insert id="insertReviewReport" parameterType="map">
+		INSERT INTO REPORT_MARKET
+		VALUES (#{reportNo}, #{reportTitle}, #{reportContent}, 
+		#{memberNo}, #{categoryCode}, #{marketNo})
+	</insert>
+	
+	<!--  게시글 삭제 -->
+	<update id="deleteMarket" parameterType="Market">
+		UPDATE MARKET SET
+		MARKET_FL = 'Y'
+		WHERE MARKET_NO = '${marketNo}'
+	</update>
+	
+	<!-- 사고팔고 수정 -->
+	<update id="updateMarket" parameterType="Market">
+		UPDATE MARKET SET
+		MARKET_TITLE = #{marketTitle},
+		MARKET_CONTENT = #{marketContent},
+		PRICE = #{price},
+		TRANSACTION_CATEGORY = #{transactionCategory},
+		STATUS = #{status},
+		ITEMCOUNT = #{itemCount},
+		CATEGORY_CD = #{categoryCd} 
+		WHERE MARKET_NO = #{marketNo}
+	</update>
+	
+	<!-- 이전 파일 레벨 수정 -->
+	<update id="updateOldFile" parameterType="MarketAttachment">
+		UPDATE MARKET_FILE SET
+		FILE_LEVEL = #{fileLevel}
+		WHERE FILE_NO = #{fileNo}
+	</update>
+	
+	<!-- 삭제된 이전 파일 DB에서 삭제 -->
+	<delete id="deleteAttachmentList" parameterType="list">
+		DELETE FROM MARKET_FILE
+		WHERE FILE_NO IN
+		<foreach collection="list" item="at" open="(" close=")" separator=",">
+			#{at.fileNo}
+		</foreach>
+	
+	
+	</delete>
+	
+	<!-- 조회수 상위 3 게시글 -->
+	<select id="reviewListTop3" resultMap="market_rm">
+			SELECT * FROM
+		(SELECT ROWNUM RNUM, R.* FROM
+		(SELECT * FROM V_MARKET
+		WHERE MARKET_FL='N' AND TRANSACTION_STATUS = 1
+		ORDER BY READ_COUNT DESC) R)
+		WHERE RNUM BETWEEN 1 AND 3
+		ORDER BY READ_COUNT DESC
+	</select>
+	
+	<!-- 닉네임 조회 -->
+	<select id="getNickname" resultType="string" parameterType="_int">
+		SELECT NICKNAME FROM MEMBER
+        WHERE MEM_NO = #{memberNo}
+	</select>
+	
+	<!-- 판매내역 게시글 수 조회 -->
+	<select id="getMyPageInfo" resultType="_int">
+		SELECT COUNT(*) FROM V_MARKET
+		WHERE MARKET_FL = 'N' AND MEM_NO = #{memberNo}
+	</select>
+	
+
+	
+		<!-- 판매내역 조회 -->
+		<select id="selectMypageList" parameterType="_int" resultMap="market_rm">
+		SELECT MARKET_NO, MARKET_TITLE, CATEGORY_NM,  PRICE, TRANSACTION_STATUS, TRANSACTION_CATEGORY
+		FROM V_MARKET
+		WHERE MARKET_FL = 'N' AND MEM_NO = #{memberNo}
+		ORDER BY MARKET_NO DESC
+	</select>
+	
+	
+	<!-- 동네인증 update -->
+	<update id="locateUpdate" parameterType="map">
+		UPDATE MEMBER_CERTIFIED SET
+		ADDRESS = #{locate},
+		CERTIFIED_FL = 'Y'
+		WHERE MEM_NO = #{memberNo}
+	</update>
+	
+	
+	<!-- 동네인증 insert -->
+	<insert id="locateInsert" parameterType="map">
+		INSERT INTO MEMBER_CERTIFIED 
+		VALUES (#{memberNo}, 'Y', #{locate})
+	</insert>
+	
+	
+	<!-- 주소 검색 insert -->
+	<insert id="NoCertificationInsert" parameterType="map">
+		INSERT INTO MEMBER_CERTIFIED 
+		VALUES (#{memberNo}, 'N', #{locate})
+	</insert>
+	
+	<!-- 주소 검색 update -->
+	<update id="NoCertificationUpdate" parameterType="map">
+		UPDATE MEMBER_CERTIFIED SET
+		ADDRESS = #{locate},
+		CERTIFIED_FL = 'N'
+		WHERE MEM_NO = #{memberNo}
+	</update>
+	
+	<!--  관리자  : 삭제된 게시글 상세 조회 -->
+	<select id="selectDeleteReview" parameterType="_int" resultMap="market_rm">
+		SELECT * FROM V_MARKET
+		WHERE MARKET_FL = 'Y'
+		AND MARKET_NO = #{marketNo}
+	</select>
+	
+	
+	
+	
+</mapper>

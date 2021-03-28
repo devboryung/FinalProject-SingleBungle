@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="boardMapper">
+
+	 <resultMap type="Board" id="board_rm">
+		<id property="boardNo" column="BOARD_NO" />
+
+		<result property="boardTitle" column="BOARD_TITLE" />
+		<result property="boardContent" column="BOARD_CONTENT" />
+		<result property="createDate" column="CREATE_DT" />
+		<result property="status" column="STATUS" />
+		<result property="readCount" column="READ_COUNT" />
+		<result property="boardCode" column="BOARD_CD" />
+		<result property="categoryCode" column="CATEGORY_CD" />
+		<result property="memberNo" column="MEM_NO" />
+		<result property="categoryName" column="CATEGORY_NM" />
+		<result property="nickname" column="NICKNAME" />
+		<result property="likeCount" column="LIKE_COUNT" />
+		<result property="memberNo" column="MEM_NO" />
+		<result property="memberGrade" column="MEM_GRADE" />
+	</resultMap>
+	
+	<resultMap type="BoardAttachment" id="attachment_rm">
+		<id property="fileNo" column="FILE_NO" />
+		
+		<result property="filePath" column="FILE_PATH" />
+		<result property="fileName" column="FILE_NM" />
+		<result property="parentBoardNo" column="PARENT_BOARD_NO" />
+		<result property="fileLevel" column="FILE_LEVEL" />
+	</resultMap>
+	
+	<resultMap type="BoardLike" id="likes_rm">
+		<id property="memberNo" column="MEM_NO"/>
+		<id property="boardNo" column="BOARD_NO"/>
+	</resultMap>
+	
+	<resultMap type="BoardReport" id="report_rm">
+		<id property="reportNo" column="REPORT_NO" />
+		<id property="reportTitle" column="REPORT_TITLE" />
+		<id property="reportContent" column="REPORT_CONTENT" />
+		<id property="memberNo" column="MEM_NO" />
+		<id property="categoryCode" column="CATEGORY_CD" />
+		<id property="boardNo" column="BOARD_NO" />
+	</resultMap>
+	
+	<resultMap type="BoardReplyReport" id="replyReport_rm">
+		<id property="reportNo" column="REPORT_NO" />
+		<id property="reportTitle" column="REPORT_TITLE" />
+		<id property="reportContent" column="REPORT_CONTENT" />
+		<id property="memberNo" column="MEM_NO" />
+		<id property="categoryCode" column="CATEGORY_CD" />
+		<id property="replyNo" column="REPLY_NO" />
+		<id property="boardNo" column="BOARD_NO" />
+	</resultMap>
+
+
+	<!-- 특정 게시판 전체 게시글 수 조회 -->
+	<select id="getListCount" resultType="_int">
+		SELECT COUNT(*) FROM V_BOARD
+		WHERE STATUS = 'N'
+		AND BOARD_CD = '1'
+	</select>
+	
+	<!-- 게시글 목록 조회 -->
+	<select id="selectList" parameterType="_int" resultMap="board_rm">
+		SELECT * FROM V_BOARD
+		WHERE STATUS = 'N'
+		AND BOARD_CD = '1'
+		ORDER BY BOARD_NO DESC
+	</select>
+	
+	<!-- 검색 게시글 수 조회 -->
+  <select id="getSearchListCount" resultType="_int">
+  		SELECT COUNT(*) FROM V_BOARD
+  		WHERE STATUS = 'N'
+  		AND BOARD_CD = '1'
+  		
+  		
+  		
+<!--   		<if test="searchKey == 'title'">
+  			AND BOARD_TITLE LIKE '%' || #{searchValue} || '%'
+  		</if>
+  		<if test="searchKey == 'titcont'">
+  			AND ( BOARD_TITLE LIKE '%' || #{searchValue} || '%'
+  			OR BOARD_CONTENT LIKE '%' || #{searchValue} || '%' )
+  		</if>
+  		<if test="searchKey == 'writer'">
+  			AND NICKNAME LIKE '%' || #{searchValue} || '%'
+  		</if> -->
+  		
+  	<!-- 넘어오는 값,, ct(카테고리), sk, sv , sort(정렬) -->
+		<if test="ct != null">
+			<choose>
+				<when test="ct == 1">
+					AND CATEGORY_CD = 11
+				</when>
+				<when test="ct == 2">
+					AND CATEGORY_CD = 12
+				</when>
+				<when test="ct == 3">
+					AND CATEGORY_CD = 13
+				</when>
+				<when test="ct == 4">
+					AND CATEGORY_CD = 14
+				</when>
+				<when test="ct == 5">
+					AND CATEGORY_CD = 15
+				</when>
+				<when test="ct == 6">
+					AND CATEGORY_CD = 16
+				</when>
+			</choose>
+		</if>
+
+		<if test="sv != null">
+			<bind name="val" value="'%' + sv + '%'" /> <!-- bind : 변수처럼 사용가능한 동적 sql -->
+			<!-- '%' || #{sv} || '%' ->를 묵어서 val이라고 부르겠다. #{}제외, ||-> +로 변경 -->
+			AND
+			<choose>
+				<when test="sk == 'title'">
+					BOARD_TITLE like #{val}
+				</when>
+				<when test="sk == 'writer'">
+					NICKNAME like #{val}
+				</when>
+				<when test="sk == 'titcont'">
+					(BOARD_TITLE like #{val} OR BOARD_CONTENT like #{val})
+				</when>
+			</choose>
+		</if>	
+  </select>  
+  
+  <!-- 게시글 검색 목록 조회 -->
+  <select id="selectSearchList" parameterType="BoardSearch" resultMap="board_rm">
+		SELECT * FROM V_BOARD
+		WHERE STATUS = 'N'
+		AND BOARD_CD = '1'
+		
+		<if test="ct != null">
+
+			<choose>
+				<when test="ct == 1">
+					AND CATEGORY_CD = 11
+				</when>
+				<when test="ct== 2">
+					AND CATEGORY_CD = 12
+				</when>
+				<when test="ct == 3">
+					AND CATEGORY_CD = 13
+				</when>
+				<when test="ct == 4">
+					AND CATEGORY_CD = 14
+				</when>
+				<when test="ct == 5">
+					AND CATEGORY_CD = 15
+				</when>
+				<when test="ct == 6">
+					AND CATEGORY_CD = 16
+				</when>
+			</choose>
+		</if>
+
+
+		<if test="sv != null">
+			<bind name="val" value="'%' + sv + '%'" /> <!-- bind : 변수처럼 사용가능한 동적 sql -->
+			<!-- '%' || #{sv} || '%' ->를 묵어서 val이라고 부르겠다. #{}제외, ||-> +로 변경 -->
+			AND
+			<choose>
+				<when test="sk == 'title'">
+					BOARD_TITLE like #{val}
+				</when>
+
+				<when test="sk == 'writer'">
+					NICKNAME like #{val}
+				</when>
+
+				<when test="sk == 'titcont'">
+					(BOARD_TITLE like #{val} OR BOARD_CONTENT like #{val})
+				</when>
+			</choose>
+		</if>
+
+		<if test="sort != null">
+			<choose>
+				<when test="sort == 'like'">
+					ORDER BY LIKE_COUNT DESC, BOARD_NO DESC
+				</when>
+				<otherwise>
+					ORDER BY BOARD_NO DESC
+				</otherwise>
+			</choose>
+		</if>
+		
+		<if test="sort == null">
+			ORDER BY BOARD_NO DESC
+		</if>
+
+	</select>
+
+	<!-- 게시글 상세 조회 -->
+	<select id="selectBoard" parameterType="Board" resultMap="board_rm">
+		SELECT * FROM V_BOARD
+		WHERE STATUS = 'N'
+		AND BOARD_NO = #{boardNo}
+		AND BOARD_CD = '1'
+	</select>
+	
+	<!-- 게시글에 포함된 이미지 목록 조회 -->
+	<select id="selectAttachmentList" parameterType="_int" resultMap="attachment_rm">
+		SELECT * FROM BOARD_FILE
+		WHERE PARENT_BOARD_NO = #{boardNo}
+	</select>
+	
+	<!-- 게시글 조회 수 증가 -->
+	<update id="increaseReadCount" parameterType="_int">
+		UPDATE BOARD SET
+		READ_COUNT = READ_COUNT + 1
+		WHERE BOARD_NO = #{boardNo}
+	</update>
+	
+	<!-- 다음 게시글 번호 조회 -->
+	<select id="selectNextNo" resultType="_int">
+		SELECT SEQ_BNO.NEXTVAL FROM DUAL
+	</select>
+	
+	<!-- 게시글 삽입 -->
+	<insert id="insertBoard" parameterType="map">
+	INSERT INTO BOARD VALUES 
+	(#{boardNo}, #{boardTitle}, 
+	 #{boardContent}, DEFAULT, DEFAULT, DEFAULT, 
+	 1, #{categoryCode}, #{memberNo})
+  </insert>
+  
+	<!-- 파일 정보 삽입 -->
+  <insert id="insertAttachmentList" parameterType="list">
+  		INSERT INTO BOARD_FILE
+  		SELECT SEQ_FNO.NEXTVAL, A.* FROM (
+  		
+  		<foreach collection="list" item="item" separator="UNION ALL">
+  				SELECT #{item.filePath} FILE_PATH,
+  							 #{item.fileName} FILE_NM,
+  							 #{item.fileLevel} FILE_LEVEL,
+  							 #{item.parentBoardNo} PARENT_BOARD_NO
+  				FROM DUAL
+  		</foreach>
+  		)A
+  </insert>
+  
+  
+  <!-- 게시글 삭제 -->
+  <update id="deleteBoard" parameterType="board">
+		UPDATE BOARD SET
+		STATUS = 'Y'
+		WHERE BOARD_NO = #{boardNo}
+	</update>
+	
+	
+	<!-- 좋아요 목록 조회 -->
+	<select id="selectLike" parameterType="_int" resultMap="likes_rm">
+		SELECT BOARD_NO
+		FROM BOARD_LIKE 
+		WHERE MEM_NO = #{memberNo}
+	</select>
+	
+	<!-- 좋아요 증가  -->
+	<insert id="increaseLike" parameterType="map">
+		INSERT INTO BOARD_LIKE VALUES (#{memberNo}, #{boardNo})
+	</insert>
+	
+	<!-- 좋아요 감소 -->
+	<delete id="decreaseLike" parameterType="map">
+		DELETE FROM BOARD_LIKE WHERE MEM_NO = #{memberNo} AND BOARD_NO = #{boardNo}
+	</delete>
+	
+	<!-- 좋아요 여부 -->
+	<select id="selectLikePushed" parameterType="map" resultType="_int">
+		SELECT COUNT(*) FROM BOARD_LIKE
+		WHERE MEM_NO = #{memberNo}
+		AND BOARD_NO = #{boardNo}
+	</select>
+	
+	
+	<!-- 게시글 수정 -->
+	<update id="updateBoard" parameterType="Board">
+		UPDATE BOARD SET
+		BOARD_TITLE = #{boardTitle},
+		BOARD_CONTENT = #{boardContent},
+		CATEGORY_CD = #{categoryCode}
+		WHERE BOARD_NO = #{boardNo}
+	</update>
+	
+	<!-- 파일 정보 일괄 삭제 -->
+	<delete id="deleteAttachmentList" parameterType="list">
+		DELETE FROM BOARD_FILE
+		WHERE FILE_NO IN
+		<foreach collection="list" item="fileNo" open="(" close=")" separator=",">
+			#{fileNo}
+		</foreach>
+	</delete>
+	
+	<!-- 신고 게시글 다음 번호 조회 -->
+	<select id="selectReportNo" resultType="_int">
+		SELECT SEQ_RNO.NEXTVAL FROM DUAL
+	</select>
+	
+	<!-- 신고 게시글 등록 -->
+	<insert id="insertBoardReport" parameterType="map">
+		INSERT INTO REPORT_BOARD VALUES 
+		(#{reportNo}, #{reportTitle}, 
+		 #{reportContent}, #{memberNo}, #{categoryCode}, #{boardNo})
+  </insert>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <!-- 관리자 : 삭제된 게시글 상세조회  -->
+	<!-- 상세조회 -->
+	<select id="selectDeleteBoard" parameterType="_int" resultMap="board_rm">
+		SELECT * FROM V_BOARD
+		WHERE STATUS = 'Y'
+		AND BOARD_NO = #{boardNo}
+		AND BOARD_CD = '1'
+	</select>
+	
+	
+	<select id="deleteMarket" parameterType="Market"></select>
+
+</mapper>
