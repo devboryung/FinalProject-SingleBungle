@@ -91,7 +91,7 @@
 ### 싱글이의 영수증 목록 조회
 
 - 화면 설명 : 구매 후기를 올리는 게시판인 싱글이의 영수증의 목록이 조회됩니다.
-![image](https://user-images.githubusercontent.com/73421820/112747449-87e84000-8ff0-11eb-8a94-c827bf1a2222.png)
+![image](https://user-images.githubusercontent.com/73421820/112748665-3cd22b00-8ff8-11eb-92e0-64fe8da6c36c.png)
 
 - 구현 기능 설명
   - 페이지의 Header에서 싱글이의 영수증을 클릭하면 등록된 게시글의 목록이 출력됩니다.
