@@ -209,6 +209,9 @@
     - 원하는 내용을 작성 후 전송 버튼을 누르면 쪽지를 보낼 수 있습니다.
     - 내용을 입력하지 않으면 alert창이 나타납니다.
      ![image](https://user-images.githubusercontent.com/73421820/112755612-59805a00-901c-11eb-8290-b9df966c2e98.png)
+     
+    - 쪽지 Modal 
+    ![image](https://user-images.githubusercontent.com/73421820/113969100-53397b80-986f-11eb-8cb5-68a1cc3c4be5.png)
 ------------
 
 ### 쪽지함
