@@ -93,8 +93,9 @@
 ### 싱글이의 영수증 목록 조회
 
 - 화면 설명 : 구매 후기를 올리는 게시판인 싱글이의 영수증의 목록이 조회됩니다.
+- 관련 코드는 <a href="https://devboryung.github.io/finalproject/final-1/">이곳</a>에서 확인하실 수 있습니다.
 ![image](https://user-images.githubusercontent.com/73421820/112748665-3cd22b00-8ff8-11eb-92e0-64fe8da6c36c.png)
-관련 코드는 <a href="https://devboryung.github.io/finalproject/final-1/">이곳</a>에서 확인하실 수 있습니다.
+
 
 - 구현 기능 설명
   - 페이지의 Header에서 싱글이의 영수증을 클릭하면 등록된 게시글의 목록이 출력됩니다.
@@ -119,8 +120,9 @@
 
 ### 게시글 등록하기
 - 화면 설명 : 등록하기 버튼을 누르면 게시글 등록 화면으로 이동됩니다.
+- 관련 코드는 <a href="https://devboryung.github.io/finalproject/final-3/">이곳</a>에서 확인하실 수 있습니다.
 ![게시글 등록](https://user-images.githubusercontent.com/73421820/112747918-6177d400-8ff3-11eb-98cb-850212ccf2a7.gif)
-관련 코드는 <a href="https://devboryung.github.io/finalproject/final-3/">이곳</a>에서 확인하실 수 있습니다.
+
 
 - 구현 기능 설명
   - 등록하기 버튼을 누르면 summernote를 사용한 게시글 작성 화면이 나타납니다.
@@ -133,8 +135,9 @@
 
 ### 게시글 상세조회
 - 화면 설명 : 원하는 게시글을 클릭하면 상세조회 페이지로 이동됩니다.
+- 관련 코드는 <a href="https://devboryung.github.io/finalproject/final-2/">이곳</a>에서 확인하실 수 있습니다.
 ![게시글 상세조회](https://user-images.githubusercontent.com/73421820/112748063-53768300-8ff4-11eb-8b72-6385ed88f63f.gif)
-관련 코드는 <a href="https://devboryung.github.io/finalproject/final-2/">이곳</a>에서 확인하실 수 있습니다.
+
 
 - 구현 기능 설명
   - 어느 게시글을 보고있는지 확인하기 쉽도록 게시판의 이름과 카테고리가 출력됩니다.
@@ -145,8 +148,9 @@
 
 ### 게시글 수정하기
 - 화면 설명 : 해당 게시글을 업로드한 회원으로 로그인하면 수정 버튼이 나타납니다.
+- 관련 코드는 <a href="https://devboryung.github.io/finalproject/final-4/">이곳</a>에서 확인하실 수 있습니다.
 ![게시글 수정](https://user-images.githubusercontent.com/73421820/112748359-16ab8b80-8ff6-11eb-80d8-bc9275e77941.gif)
-관련 코드는 <a href="https://devboryung.github.io/finalproject/final-4/">이곳</a>에서 확인하실 수 있습니다.
+
 
 - 구현 기능 설명
   - 기존에 등록한 게시글의 정보가 출력됩니다.
